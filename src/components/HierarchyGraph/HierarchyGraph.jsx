@@ -16,7 +16,7 @@ import { levelConfig } from '../../data/hierarchyData';
 // ── Node types registration ──────────────────────
 const nodeTypes = { customNode: CustomNode };
 
-const LEVEL_ORDER = ['State', 'Range', 'District', 'PS', 'Chowki'];
+const LEVEL_ORDER = ['State', 'Range', 'District', 'Units', 'Sub-Units', 'Chowki'];
 const getChildLevel = (parentLevel) => {
   const idx = LEVEL_ORDER.indexOf(parentLevel);
   return idx >= 0 && idx < LEVEL_ORDER.length - 1 ? LEVEL_ORDER[idx + 1] : null;

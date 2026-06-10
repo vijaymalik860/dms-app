@@ -3,7 +3,7 @@ import { Handle, Position } from 'reactflow';
 import { levelConfig } from '../../data/hierarchyData';
 
 const CustomNode = memo(({ data }) => {
-  const config = levelConfig[data.level] || levelConfig.PS;
+  const config = levelConfig[data.level] || levelConfig.Units;
   const hasChildren = data.childCount > 0;
 
   return (

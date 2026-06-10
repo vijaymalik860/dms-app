@@ -1,7 +1,7 @@
 -- ============================================================
 -- DMS App — Neon PostgreSQL Setup Script
 -- Run this in: Neon Console → SQL Editor
--- Structure: State → Range → District → PS → Chowki
+-- Structure: State → Range → District → Units → Sub-Units → Chowki
 -- ============================================================
 
 -- 1. LEVELS TABLE
@@ -17,8 +17,9 @@ INSERT INTO hierarchy_levels (name, level_order, color) VALUES
     ('State',    1, '#6366f1'),
     ('Range',    2, '#8b5cf6'),
     ('District', 3, '#a78bfa'),
-    ('PS',       4, '#c4b5fd'),   -- must match frontend LEVEL_ORDER array
-    ('Chowki',   5, '#f0abfc')
+    ('Units',    4, '#94a3b8'),   -- level 4: Police Stations, Traffic, Security, etc.
+    ('Sub-Units',5, '#f472b6'),   -- level 5: Actual PS names, Training Wings, etc.
+    ('Chowki',   6, '#f0abfc')    -- level 6: Chowkis
 ON CONFLICT DO NOTHING;
 
 
@@ -51,78 +52,46 @@ ON CONFLICT DO NOTHING;
 -- Level 2: Ranges
 INSERT INTO hierarchy_nodes (name, code, level_id, parent_id) VALUES
     ('Ambala Range',   'HR-AMB-RNG', 2, (SELECT id FROM hierarchy_nodes WHERE code='HR')),
-    ('Rohtak Range',   'HR-ROH-RNG', 2, (SELECT id FROM hierarchy_nodes WHERE code='HR')),
-    ('Hisar Range',    'HR-HIS-RNG', 2, (SELECT id FROM hierarchy_nodes WHERE code='HR')),
-    ('Gurugram Range', 'HR-GGN-RNG', 2, (SELECT id FROM hierarchy_nodes WHERE code='HR'))
+    ('Rohtak Range',   'HR-ROH-RNG', 2, (SELECT id FROM hierarchy_nodes WHERE code='HR'))
 ON CONFLICT DO NOTHING;
 
 -- Level 3: Districts (Ambala Range)
 INSERT INTO hierarchy_nodes (name, code, level_id, parent_id) VALUES
     ('Ambala District',     'HR-AMB-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-RNG')),
-    ('Kurukshetra District','HR-KRK-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-RNG')),
-    ('Yamunanagar District','HR-YNR-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-RNG')),
-    ('Panchkula District',  'HR-PKL-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-RNG'))
+    ('Kurukshetra District','HR-KRK-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-RNG'))
 ON CONFLICT DO NOTHING;
 
--- Level 3: Districts (Rohtak Range)
+-- Level 4: Units (Ambala District)
 INSERT INTO hierarchy_nodes (name, code, level_id, parent_id) VALUES
-    ('Rohtak District',  'HR-ROH-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-ROH-RNG')),
-    ('Jhajjar District', 'HR-JJR-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-ROH-RNG')),
-    ('Sonipat District', 'HR-SNP-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-ROH-RNG'))
+    ('Police Stations',      'HR-AMB-UNIT-PS',   4, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-DIST')),
+    ('Traffic',              'HR-AMB-UNIT-TRF',  4, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-DIST')),
+    ('Special Staffs',       'HR-AMB-UNIT-SPL',  4, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-DIST')),
+    ('Court',                'HR-AMB-UNIT-CRT',  4, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-DIST')),
+    ('Administrative Units', 'HR-AMB-UNIT-ADM',  4, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-DIST')),
+    ('Security',             'HR-AMB-UNIT-SEC',  4, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-DIST')),
+    ('Temp_Dep_Trg',         'HR-AMB-UNIT-TMP',  4, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-DIST'))
 ON CONFLICT DO NOTHING;
 
--- Level 3: Districts (Hisar Range)
+-- Level 5: Sub-Units (under Police Stations -> Ambala District)
 INSERT INTO hierarchy_nodes (name, code, level_id, parent_id) VALUES
-    ('Hisar District', 'HR-HIS-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-HIS-RNG')),
-    ('Sirsa District', 'HR-SRH-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-HIS-RNG'))
+    ('PS Ambala City',  'HR-AMB-PS-01', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-UNIT-PS')),
+    ('PS Ambala Cantt', 'HR-AMB-PS-02', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-UNIT-PS')),
+    ('PS Baldev Nagar', 'HR-AMB-PS-03', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-UNIT-PS')),
+    ('PS Mullana',      'HR-AMB-PS-04', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-UNIT-PS'))
 ON CONFLICT DO NOTHING;
 
--- Level 3: Districts (Gurugram Range)
+-- Level 5: Sub-Units (under Temp_Dep_Trg -> Ambala District)
 INSERT INTO hierarchy_nodes (name, code, level_id, parent_id) VALUES
-    ('Gurugram District',  'HR-GGN-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-GGN-RNG')),
-    ('Faridabad District', 'HR-FBD-DIST', 3, (SELECT id FROM hierarchy_nodes WHERE code='HR-GGN-RNG'))
+    ('Temporary Posting (with order)',    'HR-AMB-TMP-01', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-UNIT-TMP')),
+    ('Temporary Posting (without order)', 'HR-AMB-TMP-02', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-UNIT-TMP')),
+    ('Training Courses',                  'HR-AMB-TMP-03', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-UNIT-TMP'))
 ON CONFLICT DO NOTHING;
 
--- Level 4: Police Stations (Ambala District)
+-- Level 6: Chowki (under PS Ambala City)
 INSERT INTO hierarchy_nodes (name, code, level_id, parent_id) VALUES
-    ('PS Ambala City',  'HR-AMB-PS-01', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-DIST')),
-    ('PS Ambala Cantt', 'HR-AMB-PS-02', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-DIST')),
-    ('PS Baldev Nagar', 'HR-AMB-PS-03', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-DIST')),
-    ('PS Mullana',      'HR-AMB-PS-04', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-DIST'))
-ON CONFLICT DO NOTHING;
-
--- Level 4: Police Stations (Kurukshetra District)
-INSERT INTO hierarchy_nodes (name, code, level_id, parent_id) VALUES
-    ('PS Thanesar', 'HR-KRK-PS-01', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-KRK-DIST')),
-    ('PS Pehowa',   'HR-KRK-PS-02', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-KRK-DIST')),
-    ('PS Shahabad', 'HR-KRK-PS-03', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-KRK-DIST'))
-ON CONFLICT DO NOTHING;
-
--- Level 4: Police Stations (Rohtak District)
-INSERT INTO hierarchy_nodes (name, code, level_id, parent_id) VALUES
-    ('PS City Rohtak',  'HR-ROH-PS-01', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-ROH-DIST')),
-    ('PS Delhi Bypass', 'HR-ROH-PS-02', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-ROH-DIST')),
-    ('PS Asthal Bohar', 'HR-ROH-PS-03', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-ROH-DIST'))
-ON CONFLICT DO NOTHING;
-
--- Level 4: Police Stations (Gurugram District)
-INSERT INTO hierarchy_nodes (name, code, level_id, parent_id) VALUES
-    ('PS DLF Phase-1', 'HR-GGN-PS-01', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-GGN-DIST')),
-    ('PS Sohna Road',  'HR-GGN-PS-02', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-GGN-DIST')),
-    ('PS Cyber City',  'HR-GGN-PS-03', 4, (SELECT id FROM hierarchy_nodes WHERE code='HR-GGN-DIST'))
-ON CONFLICT DO NOTHING;
-
--- Level 5: Chowki (under PS Ambala City)
-INSERT INTO hierarchy_nodes (name, code, level_id, parent_id) VALUES
-    ('Chowki Balughat',      'HR-AMB-PS-01-CK-01', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-PS-01')),
-    ('Chowki Court Complex', 'HR-AMB-PS-01-CK-02', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-PS-01')),
-    ('Chowki Bus Stand',     'HR-AMB-PS-01-CK-03', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-PS-01'))
-ON CONFLICT DO NOTHING;
-
--- Level 5: Chowki (under PS Thanesar)
-INSERT INTO hierarchy_nodes (name, code, level_id, parent_id) VALUES
-    ('Chowki Pipli',        'HR-KRK-PS-01-CK-01', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-KRK-PS-01')),
-    ('Chowki Railway Road', 'HR-KRK-PS-01-CK-02', 5, (SELECT id FROM hierarchy_nodes WHERE code='HR-KRK-PS-01'))
+    ('Chowki Balughat',      'HR-AMB-PS-01-CK-01', 6, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-PS-01')),
+    ('Chowki Court Complex', 'HR-AMB-PS-01-CK-02', 6, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-PS-01')),
+    ('Chowki Bus Stand',     'HR-AMB-PS-01-CK-03', 6, (SELECT id FROM hierarchy_nodes WHERE code='HR-AMB-PS-01'))
 ON CONFLICT DO NOTHING;
 
 
@@ -145,4 +114,4 @@ LEFT JOIN hierarchy_nodes p ON n.parent_id = p.id
 ORDER BY l.level_order, n.name;
 
 -- Verify:
-SELECT level_name, COUNT(*) as total FROM vw_hierarchy_full GROUP BY level_name, level_order ORDER BY level_order;
+-- SELECT level_name, COUNT(*) as total FROM vw_hierarchy_full GROUP BY level_name, level_order ORDER BY level_order;

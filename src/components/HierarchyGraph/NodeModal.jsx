@@ -12,7 +12,7 @@ export default function NodeModal({ mode, node, parentNode, childLevel, onSave, 
   }, [mode, node]);
 
   const targetLevel = mode === 'add' ? childLevel : node?.level;
-  const cfg = levelConfig[targetLevel] || levelConfig.PS;
+  const cfg = levelConfig[targetLevel] || levelConfig.Units;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -53,7 +53,8 @@ export default function NodeModal({ mode, node, parentNode, childLevel, onSave, 
               placeholder={`e.g. ${
                 targetLevel === 'Range'    ? 'Faridabad Range' :
                 targetLevel === 'District' ? 'Panipat District' :
-                targetLevel === 'PS'       ? 'PS Civil Lines' :
+                targetLevel === 'Units'       ? 'Police Stations' :
+                targetLevel === 'Sub-Units'   ? 'PS Civil Lines' :
                 targetLevel === 'Chowki'   ? 'Chowki Bus Stand' :
                 'Unit Name'
               }`}
