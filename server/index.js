@@ -153,11 +153,15 @@ app.delete('/api/hierarchy/nodes/:id', async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`🚀 DMS API Server running → http://localhost:${PORT}`);
-  console.log(`   GET  /api/hierarchy`);
-  console.log(`   POST /api/hierarchy/nodes`);
-  console.log(`   PUT  /api/hierarchy/nodes/:id`);
-  console.log(`   DEL  /api/hierarchy/nodes/:id`);
-});
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`🚀 DMS API Server running → http://localhost:${PORT}`);
+    console.log(`   GET  /api/hierarchy`);
+    console.log(`   POST /api/hierarchy/nodes`);
+    console.log(`   PUT  /api/hierarchy/nodes/:id`);
+    console.log(`   DEL  /api/hierarchy/nodes/:id`);
+  });
+}
+
+export default app;
