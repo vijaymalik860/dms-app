@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { Network, LayoutDashboard, Users, ShieldAlert } from 'lucide-react';
-import HierarchyGraph from './components/HierarchyGraph/HierarchyGraph';
+import { Network, LayoutDashboard, Users, ShieldAlert, Settings } from 'lucide-react';
+import HierarchyGraph   from './components/HierarchyGraph/HierarchyGraph';
+import PersonnelList    from './components/Personnel/PersonnelList';
+import DropdownMaster   from './components/Dropdown/DropdownMaster';
+import Dashboard        from './components/Dashboard/Dashboard';
 import './layout.css';
 
 function App() {
-  const [activeModule, setActiveModule] = useState('hierarchy');
+  const [activeModule, setActiveModule] = useState('dashboard');
 
   return (
     <div className="app-layout">
@@ -47,6 +50,27 @@ function App() {
             <span className="nav-icon"><ShieldAlert size={18} /></span>
             Incidents
           </button>
+
+          {/* ── New Modules ──────────────────── */}
+          <div style={{ padding: '8px 12px 4px', fontSize: '0.68rem', fontWeight: 700, color: '#334155', letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: 8 }}>
+            Management
+          </div>
+
+          <button 
+            className={`nav-item ${activeModule === 'personnel' ? 'active' : ''}`}
+            onClick={() => setActiveModule('personnel')}
+          >
+            <span className="nav-icon"><Users size={18} /></span>
+            Employee Master
+          </button>
+
+          <button 
+            className={`nav-item ${activeModule === 'dropdowns' ? 'active' : ''}`}
+            onClick={() => setActiveModule('dropdowns')}
+          >
+            <span className="nav-icon"><Settings size={18} /></span>
+            Dropdown Master
+          </button>
         </nav>
 
         <div className="sidebar-footer">
@@ -56,8 +80,11 @@ function App() {
 
       {/* Main Content Area */}
       <main className="main-content">
-        {activeModule === 'hierarchy' && <HierarchyGraph />}
-        {activeModule !== 'hierarchy' && (
+        {activeModule === 'dashboard'  && <Dashboard />}
+        {activeModule === 'hierarchy'  && <HierarchyGraph />}
+        {activeModule === 'personnel'  && <PersonnelList />}
+        {activeModule === 'dropdowns'  && <DropdownMaster />}
+        {activeModule !== 'dashboard' && activeModule !== 'hierarchy' && activeModule !== 'personnel' && activeModule !== 'dropdowns' && (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#64748b' }}>
             <h2>{activeModule.charAt(0).toUpperCase() + activeModule.slice(1)} Module (Coming Soon)</h2>
           </div>
