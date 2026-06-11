@@ -375,9 +375,6 @@ export default function PersonnelForm({ record, onClose, onSaved }) {
             <Sel label="District" name="district_id" placeholder="Select District"
               options={districts.map(n => ({ id: n.id, name: n.name }))}
               disabled={!form.range_id} />
-            <Sel label="Unit Category" name="unit_type" placeholder="Select Category"
-              options={['Police Station','Outpost','Special Branch','Traffic','Reserve']}
-              disabled={!form.district_id} />
             <Sel label="Unit" name="current_unit_id" placeholder="Select Unit"
               options={units.map(n => ({ id: n.id, name: n.name }))}
               disabled={!form.district_id} />
