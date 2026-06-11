@@ -6,21 +6,41 @@ import fs from 'fs';
 
 const router = express.Router();
 
-const uploadDir = 'server/uploads/personnel';
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+// ── Multer storage ────────────────────────────────────────────
+// On Vercel (serverless): use memoryStorage (no disk write)
+// On local dev: use diskStorage to persist files
+const IS_VERCEL = !!process.env.VERCEL;
 
-const storage = multer.diskStorage({
-  destination(req, file, cb) { cb(null, uploadDir); },
-  filename(req, file, cb) {
-    const ext = path.extname(file.originalname);
-    cb(null, `photo_${Date.now()}${ext}`);
-  },
-});
-const fileFilter = (req, file, cb) => {
-  if (['image/jpeg','image/jpg','image/png','image/webp'].includes(file.mimetype)) cb(null, true);
-  else cb(new Error('Sirf JPG, PNG, WEBP allowed hain'), false);
-};
-const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
+let upload;
+if (IS_VERCEL) {
+  // Vercel — read-only filesystem, store in memory
+  upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+      if (['image/jpeg','image/jpg','image/png','image/webp'].includes(file.mimetype)) cb(null, true);
+      else cb(new Error('Sirf JPG, PNG, WEBP allowed hain'), false);
+    },
+  });
+} else {
+  // Local dev — persist to disk
+  const uploadDir = 'server/uploads/personnel';
+  if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+  upload = multer({
+    storage: multer.diskStorage({
+      destination(req, file, cb) { cb(null, uploadDir); },
+      filename(req, file, cb) {
+        const ext = path.extname(file.originalname);
+        cb(null, `photo_${Date.now()}${ext}`);
+      },
+    }),
+    fileFilter: (req, file, cb) => {
+      if (['image/jpeg','image/jpg','image/png','image/webp'].includes(file.mimetype)) cb(null, true);
+      else cb(new Error('Sirf JPG, PNG, WEBP allowed hain'), false);
+    },
+    limits: { fileSize: 5 * 1024 * 1024 },
+  });
+}
 
 function getPool(req) { return req.app.locals.pool; }
 
@@ -198,7 +218,12 @@ router.post('/', upload.single('photo'), async (req, res) => {
   if (!req.body.full_name)
     return res.status(400).json({ success: false, error: 'full_name required hai' });
 
-  const photoUrl = req.file ? `uploads/personnel/${req.file.filename}` : null;
+  const photoUrl = req.file
+    ? (req.file.filename
+        ? `uploads/personnel/${req.file.filename}`  // diskStorage (local)
+        : null)                                      // memoryStorage (Vercel — no persistent URL)
+    : null;
+
   const f = buildFieldValues(req.body, photoUrl);
 
   // Build dynamic INSERT
