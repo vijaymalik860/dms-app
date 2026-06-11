@@ -366,7 +366,7 @@ export default function PersonnelForm({ record, onClose, onSaved }) {
             <span className="pf-strict-badge">STRICT</span>
           </div>
 
-          <div className="pf-grid-5">
+          <div className="pf-grid-4">
             <Sel label="State" name="state_id" placeholder="Select State"
               options={states.map(n => ({ id: n.id, name: n.name }))} />
             <Sel label="Range" name="range_id" placeholder="Select Range"
