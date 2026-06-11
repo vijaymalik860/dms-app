@@ -52,6 +52,17 @@
 .btn-sm { padding: 5px 10px; font-size: 0.78rem; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
+/* ── Filters Bar ───────────────────────────────────────────── */
+.pl-filters {
+  display: flex;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: rgba(15,23,42,0.4);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
 /* ── Search Bar ────────────────────────────────────────────── */
 .search-bar {
   display: flex;
@@ -61,8 +72,9 @@
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 10px;
   padding: 8px 14px;
-  min-width: 260px;
+  min-width: 200px;
   transition: border-color 0.2s;
+  flex: 1;
 }
 .search-bar:focus-within { border-color: rgba(99,102,241,0.5); }
 .search-bar svg { color: #64748b; flex-shrink: 0; }
@@ -75,6 +87,11 @@
   width: 100%;
 }
 .search-bar input::placeholder { color: #475569; }
+
+@media (max-width: 600px) {
+  .pl-filters { flex-direction: column; }
+  .pl-filters select { width: 100% !important; }
+}
 
 /* ── Table ─────────────────────────────────────────────────── */
 .data-table-wrapper {

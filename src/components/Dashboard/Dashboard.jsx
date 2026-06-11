@@ -159,61 +159,65 @@ export default function Dashboard() {
           {/* Recent Personnel table */}
           <div className="db-card">
             <div className="db-section-title">Recent Personnel</div>
-            <table className="db-table">
-              <thead>
-                <tr>
-                  <th>S.NO</th>
-                  <th>Belt No.</th>
-                  <th>Name</th>
-                  <th>Rank</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan={5} className="db-loading-cell">Loading...</td></tr>
-                ) : recent.length === 0 ? (
-                  <tr><td colSpan={5} className="db-empty-cell">Koi record nahi</td></tr>
-                ) : recent.map((p, i) => (
-                  <tr key={p.id}>
-                    <td>{i + 1}</td>
-                    <td>{p.belt_number || '—'}</td>
-                    <td>{p.full_name}</td>
-                    <td className="db-rank-cell">{p.rank || '—'}</td>
-                    <td>
-                      <span className={`db-status ${statusCls(p.service_status)}`}>
-                        {p.service_status || '—'}
-                      </span>
-                    </td>
+            <div className="db-table-wrapper">
+              <table className="db-table">
+                <thead>
+                  <tr>
+                    <th>S.NO</th>
+                    <th>Belt No.</th>
+                    <th>Name</th>
+                    <th>Rank</th>
+                    <th>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr><td colSpan={5} className="db-loading-cell">Loading...</td></tr>
+                  ) : recent.length === 0 ? (
+                    <tr><td colSpan={5} className="db-empty-cell">Koi record nahi</td></tr>
+                  ) : recent.map((p, i) => (
+                    <tr key={p.id}>
+                      <td>{i + 1}</td>
+                      <td>{p.belt_number || '—'}</td>
+                      <td>{p.full_name}</td>
+                      <td className="db-rank-cell">{p.rank || '—'}</td>
+                      <td>
+                        <span className={`db-status ${statusCls(p.service_status)}`}>
+                          {p.service_status || '—'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* States & Districts table */}
           <div className="db-card">
             <div className="db-section-title">All Configured States &amp; Districts</div>
-            <table className="db-table">
-              <thead>
-                <tr>
-                  <th>State / District Name</th>
-                  <th className="db-th-right">Total Districts</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan={2} className="db-loading-cell">Loading...</td></tr>
-                ) : stateRows.length === 0 ? (
-                  <tr><td colSpan={2} className="db-empty-cell">Koi data nahi</td></tr>
-                ) : stateRows.map((s, i) => (
-                  <tr key={i}>
-                    <td><span className="db-chevron">›</span>{s.name}</td>
-                    <td className="db-td-right">{s.districts}</td>
+            <div className="db-table-wrapper">
+              <table className="db-table">
+                <thead>
+                  <tr>
+                    <th>State / District Name</th>
+                    <th className="db-th-right">Total Districts</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr><td colSpan={2} className="db-loading-cell">Loading...</td></tr>
+                  ) : stateRows.length === 0 ? (
+                    <tr><td colSpan={2} className="db-empty-cell">Koi data nahi</td></tr>
+                  ) : stateRows.map((s, i) => (
+                    <tr key={i}>
+                      <td><span className="db-chevron">›</span>{s.name}</td>
+                      <td className="db-td-right">{s.districts}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
         </div>

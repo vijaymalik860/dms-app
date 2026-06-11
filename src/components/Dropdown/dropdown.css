@@ -512,6 +512,7 @@
 
 @media (max-width: 900px) {
   .dm-fields-grid { grid-template-columns: repeat(2, 1fr); }
+  .dm-table { min-width: 400px; }
 }
 
 @media (max-width: 600px) {

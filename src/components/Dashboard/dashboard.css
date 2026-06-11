@@ -217,7 +217,12 @@
 .db-status-other     { color: #64748b; }
 
 /* ── Responsive ─────────────────────────────────────────────── */
+.db-table-wrapper {
+  overflow-x: auto;
+}
+
 @media (max-width: 900px) {
   .db-grid-2 { grid-template-columns: 1fr; }
   .db-content { padding: 16px 16px 30px; }
+  .db-table { min-width: 500px; }
 }

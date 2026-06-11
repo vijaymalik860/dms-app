@@ -108,7 +108,7 @@ export default function PersonnelList() {
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, padding: '14px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(15,23,42,0.4)', flexShrink: 0 }}>
+      <div className="pl-filters">
         <div className="search-bar" style={{ flex: 1 }}>
           <Search size={15} />
           <input
