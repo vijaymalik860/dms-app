@@ -1,11 +1,11 @@
 // src/components/Personnel/PersonnelList.jsx
 import { useState, useEffect, useCallback } from 'react';
-import { Users, Plus, Search, Edit2, Trash2, Upload, RefreshCw, UserCheck } from 'lucide-react';
+import { Users, Plus, Search, Edit2, Trash2, Upload, RefreshCw, UserCheck, ArrowLeft } from 'lucide-react';
 import PersonnelForm from './PersonnelForm';
 import ExcelImport from './ExcelImport';
 import './personnel.css';
 
-export default function PersonnelList() {
+export default function PersonnelList({ goHome }) {
   const [personnel, setPersonnel] = useState([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState(null);
@@ -93,9 +93,16 @@ export default function PersonnelList() {
 
       {/* Header */}
       <div className="module-header">
-        <div>
-          <h1><Users size={20} /> Employee Master Data</h1>
-          <div className="module-subtitle">Total Records: {total}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {goHome && (
+            <button className="btn btn-ghost btn-sm" onClick={goHome} title="Back to Dashboard">
+              <ArrowLeft size={18} />
+            </button>
+          )}
+          <div>
+            <h1><Users size={20} /> Employee Master Data</h1>
+            <div className="module-subtitle">Total Records: {total}</div>
+          </div>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="btn btn-ghost btn-sm" onClick={openImport}>

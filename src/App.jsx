@@ -104,9 +104,9 @@ function App() {
       {/* Main Content Area */}
       <main className="main-content">
         {activeModule === 'dashboard'  && <Dashboard />}
-        {activeModule === 'hierarchy'  && <HierarchyGraph />}
-        {activeModule === 'personnel'  && <PersonnelList />}
-        {activeModule === 'dropdowns'  && <DropdownMaster />}
+        {activeModule === 'hierarchy'  && <HierarchyGraph goHome={() => handleNavClick('dashboard')} />}
+        {activeModule === 'personnel'  && <PersonnelList goHome={() => handleNavClick('dashboard')} />}
+        {activeModule === 'dropdowns'  && <DropdownMaster goHome={() => handleNavClick('dashboard')} />}
         {activeModule !== 'dashboard' && activeModule !== 'hierarchy' && activeModule !== 'personnel' && activeModule !== 'dropdowns' && (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#64748b' }}>
             <h2>{activeModule.charAt(0).toUpperCase() + activeModule.slice(1)} Module (Coming Soon)</h2>

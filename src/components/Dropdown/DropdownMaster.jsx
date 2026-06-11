@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 
 import {
   Database, Plus, Edit2, Trash2, X, Check, ChevronUp, ChevronDown,
-  GripVertical, Save, LayoutTemplate, AlertCircle
+  GripVertical, Save, LayoutTemplate, AlertCircle, ArrowLeft
 } from 'lucide-react';
 import './dropdown.css';
 
@@ -71,7 +71,7 @@ const INITIAL_LAYOUT = [
 const SECTION_OPTIONS = INITIAL_LAYOUT.map(s => ({ id: s.id, title: s.title }));
 
 // ── Main Component ──────────────────────────────────────────────
-export default function DropdownMaster() {
+export default function DropdownMaster({ goHome }) {
   const [fieldTypes, setFieldTypes] = useState([]);
   const [activeTab, setActiveTab] = useState(null); // field_type id or 'personnel_layout'
   const [loading, setLoading] = useState(true);
@@ -265,6 +265,11 @@ export default function DropdownMaster() {
       {/* ── Header ──────────────────────────────────────────── */}
       <div className="dm-header">
         <div className="dm-header-left">
+          {goHome && (
+            <button className="dm-btn-ghost" style={{ padding: '6px' }} onClick={goHome} title="Back to Dashboard">
+              <ArrowLeft size={18} />
+            </button>
+          )}
           <Database size={20} className="dm-header-icon" />
           <div>
             <h1 className="dm-header-title">Dropdown Master Management</h1>

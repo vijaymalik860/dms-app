@@ -8,6 +8,7 @@ import ReactFlow, {
   BackgroundVariant,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import { ArrowLeft } from 'lucide-react';
 import './hierarchy.css';
 import CustomNode from './CustomNode';
 import NodeModal from './NodeModal';
@@ -182,7 +183,7 @@ function Toast({ msg, type }) {
 }
 
 // ── Main Component ────────────────────────────────
-export default function HierarchyGraph() {
+export default function HierarchyGraph({ goHome }) {
   const [treeData, setTreeData]         = useState(null);
   const [loading, setLoading]           = useState(true);
   const [apiLoading, setApiLoading]     = useState(false);
@@ -306,7 +307,12 @@ export default function HierarchyGraph() {
 
       {/* ── Header ── */}
       <div className="hierarchy-header">
-        <div className="hierarchy-title">
+        <div className="hierarchy-title" style={{ gap: '12px' }}>
+          {goHome && (
+            <button className="toolbar-btn" onClick={goHome} title="Back to Dashboard" style={{ padding: '6px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ArrowLeft size={16} />
+            </button>
+          )}
           <span>🏛️ Haryana Police — Organizational Hierarchy</span>
           <span className="badge">{nodes.length} units visible</span>
           <span className="badge badge--db">☁️ Neon DB</span>
