@@ -2,12 +2,25 @@ import express from 'express';
 import pg from 'pg';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+// ── New Module Routes ──────────────────────────────────────────
+import dropdownRoutes  from './routes/dropdowns.js';
+import personnelRoutes from './routes/personnel.js';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ── Static: Serve uploaded photos ─────────────────────────────
+// URL: /uploads/personnel/filename.jpg
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const { Pool } = pg;
 const pool = new Pool(
@@ -25,6 +38,9 @@ const pool = new Pool(
       }
 );
 
+// ── Share pool with all route files via app.locals ────────────
+// (routes access it via req.app.locals.pool)
+
 pool.on('error', (err, client) => {
   console.error('Unexpected error on idle client', err);
 });
@@ -34,9 +50,16 @@ pool.connect()
   .then(() => console.log('✅ PostgreSQL connected → dms_app'))
   .catch(err => console.error('❌ DB connection failed:', err.message));
 
+// Share pool with route files
+app.locals.pool = pool;
+
 // ─────────────────────────────────────────────────────
 // ROUTES
 // ─────────────────────────────────────────────────────
+
+// ── New Module Routes ──────────────────────────────────────────
+app.use('/api/dropdowns', dropdownRoutes);
+app.use('/api/personnel', personnelRoutes);
 
 // GET /api/hierarchy  — full tree as JSON
 app.get('/api/hierarchy', async (req, res) => {
@@ -157,10 +180,22 @@ if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 3001;
   app.listen(PORT, () => {
     console.log(`🚀 DMS API Server running → http://localhost:${PORT}`);
+    console.log(`   ── Hierarchy ─────────────────────`);
     console.log(`   GET  /api/hierarchy`);
     console.log(`   POST /api/hierarchy/nodes`);
     console.log(`   PUT  /api/hierarchy/nodes/:id`);
     console.log(`   DEL  /api/hierarchy/nodes/:id`);
+    console.log(`   ── Dropdowns ─────────────────────`);
+    console.log(`   GET  /api/dropdowns`);
+    console.log(`   POST /api/dropdowns/values`);
+    console.log(`   PUT  /api/dropdowns/values/:id`);
+    console.log(`   DEL  /api/dropdowns/values/:id`);
+    console.log(`   ── Personnel ─────────────────────`);
+    console.log(`   GET  /api/personnel`);
+    console.log(`   POST /api/personnel`);
+    console.log(`   PUT  /api/personnel/:id`);
+    console.log(`   DEL  /api/personnel/:id`);
+    console.log(`   POST /api/personnel/upsert`);
   });
 }
 
