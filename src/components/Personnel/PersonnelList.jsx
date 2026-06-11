@@ -45,6 +45,13 @@ export default function PersonnelList({ goHome }) {
     } catch (_) {}
   };
 
+  // Extract short code from "Sub-Inspector (SI)" → "SI"
+  // Falls back to full string if no parentheses found
+  const getRankCode = (rankStr) => {
+    const match = rankStr.match(/\(([^)]+)\)$/);
+    return match ? match[1] : rankStr;
+  };
+
   useEffect(() => { fetchPersonnel(); }, [fetchPersonnel]);
   useEffect(() => { fetchRanks(); }, []);
 
@@ -126,7 +133,7 @@ export default function PersonnelList({ goHome }) {
         </div>
         <select className="form-control" style={{ width: 180 }} value={rankFilter} onChange={e => setRankFilter(e.target.value)}>
           <option value="">Sabhi Ranks</option>
-          {ranks.map(r => <option key={r} value={r}>{r}</option>)}
+          {ranks.map(r => <option key={r} value={getRankCode(r)}>{r}</option>)}
         </select>
         <button className="btn btn-ghost btn-sm" onClick={fetchPersonnel} title="Refresh">
           <RefreshCw size={15} />
